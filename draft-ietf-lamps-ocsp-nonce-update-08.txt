@@ -11,7 +11,7 @@ Expires: 17 November 2024
 
 
        Online Certificate Status Protocol (OCSP) Nonce Extension
-                 draft-ietf-lamps-ocsp-nonce-update-08
+                 draft-ietf-lamps-ocsp-nonce-update-09
 
 Abstract
 
@@ -55,7 +55,7 @@ Copyright Notice
 
 Sharma                  Expires 17 November 2024                [Page 1]
 
-Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
+Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-09         May 2024
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -92,7 +92,7 @@ Table of Contents
    to 32 octets.  To support cryptographic algorithms that generate a
    Nonce that is longer than 32 octets, this document updates the
    maximum allowed size of the Nonce to 128 octets.  In addition, this
-   document recommends that the OCSP client and responder use a Nonce
+   document recommends that the OCSP requester and responder use a Nonce
    with a minimum length of 32 octets.
 
 1.1.  Requirements Language
@@ -111,7 +111,7 @@ Table of Contents
 
 Sharma                  Expires 17 November 2024                [Page 2]
 
-Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
+Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-09         May 2024
 
 
 2.  OCSP Extensions
@@ -135,36 +135,28 @@ Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
    the Nonce will be identified by the object identifier id-pkix-ocsp-
    nonce, while the extnValue is the encoded value of Nonce.  If the
    Nonce extension is present, then the length of the Nonce MUST be at
-   least 1 octet and can be up to 128 octets. [RFC8954] compliant 
-   implementations will be unable to process nonces 
-   generated per the new specification with sizes in excess of the limit
-   of 32 octets that was specified in [RFC8954].
+   least 1 octet and can be up to 128 octets.  [RFC8954] compliant
+   implementations will be unable to process nonces generated per the
+   new specification with sizes in excess of the limit of 32 octets that
+   was specified in [RFC8954].
 
    An OCSP requester that implements this document MUST use a minimum
    length of 32 octets for Nonce in the Nonce extension.
-   
-   An OCSP responder that implements this document MUST reject any OCSP
+
+   An OCSP responder , supporting the Nonce extension, MUST accept Nonce
+   lengths of at least 16 octets and MAY choose to ignore the Nonce
+   extension for requests where the length of the Nonce is in between 1
+   octet and 15 octets or 33 octets and 128 octets.
+
+   Responders, that implements this document MUST reject any OCSP
    request that has a Nonce with a length of either 0 octets or more
    than 128 octets, with the malformedRequest OCSPResponseStatus as
-   described in Section 4.2.1 of [RFC6960].  
-   Responders, supporting the Nonce extension, MUST accept Nonce lengths
-   of at least 16 octets and MAY choose to ignore the Nonce extension 
-   for requests where the length of the Nonce is in between 1 octet and
-   15 octets or 33 octets and 128 octets.
+   described in Section 4.2.1 of [RFC6960].
 
    The value of the Nonce MUST be generated using a cryptographically
    strong pseudorandom number generator (see [RFC4086]).  The minimum
    Nonce length of 1 octet is defined to provide backward compatibility
    with older OCSP requester that follow [RFC6960].
-
-   
-
-   
-  
-
-   An OCSP client   
-
-   
 
    id-pkix-ocsp           OBJECT IDENTIFIER ::= { id-ad-ocsp }
    id-pkix-ocsp-nonce     OBJECT IDENTIFIER ::= { id-pkix-ocsp 2 }
@@ -173,10 +165,9 @@ Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
 
 
 
-
 Sharma                  Expires 17 November 2024                [Page 3]
 
-Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
+Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-09         May 2024
 
 
    Example of an encoded OCSP Nonce extension with 32 octet Nonce in
@@ -207,15 +198,15 @@ Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
    for a certificate is not expired but the responder has a changed
    status for that certificate, a copy of that OCSP response can be used
    to indicate that the status of the certificate is still valid.
-   Including a client's nonce value in the OCSP response makes sure that
-   the response is the latest response from the server and not an old
-   copy.
+   Including a requester's nonce value in the OCSP response makes sure
+   that the response is the latest response from the server and not an
+   old copy.
 
 3.1.  Replay Attack
 
    The Nonce extension is used to avoid replay attacks.  Since the OCSP
    responder may choose not to send the Nonce extension in the OCSP
-   response even if the client has sent the Nonce extension in the
+   response even if the requester has sent the Nonce extension in the
    request [RFC5019], an on-path attacker can intercept the OCSP request
    and respond with an earlier response from the server without the
    Nonce extension.  This can be mitigated by configuring the server to
@@ -232,7 +223,7 @@ Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
 
 Sharma                  Expires 17 November 2024                [Page 4]
 
-Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
+Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-09         May 2024
 
 
 4.  IANA Considerations
@@ -288,7 +279,7 @@ Normative References
 
 Sharma                  Expires 17 November 2024                [Page 5]
 
-Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
+Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-09         May 2024
 
 
    [RFC6960]  Santesson, S., Myers, M., Ankney, R., Malpani, A.,
@@ -344,7 +335,7 @@ A.1.  OCSP in ASN.1 - 1998 Syntax
 
 Sharma                  Expires 17 November 2024                [Page 6]
 
-Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
+Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-09         May 2024
 
 
 OCSP-2024-88
@@ -400,7 +391,7 @@ CertID ::= SEQUENCE {
 
 Sharma                  Expires 17 November 2024                [Page 7]
 
-Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
+Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-09         May 2024
 
 
    issuerNameHash          OCTET STRING, -- Hash of issuer's DN
@@ -456,7 +447,7 @@ KeyHash ::= OCTET STRING -- SHA-1 hash of responder's public key
 
 Sharma                  Expires 17 November 2024                [Page 8]
 
-Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
+Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-09         May 2024
 
 
 SingleResponse ::= SEQUENCE {
@@ -512,7 +503,7 @@ id-pkix-ocsp-nocheck         OBJECT IDENTIFIER ::= { id-pkix-ocsp 5 }
 
 Sharma                  Expires 17 November 2024                [Page 9]
 
-Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
+Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-09         May 2024
 
 
 id-pkix-ocsp-archive-cutoff  OBJECT IDENTIFIER ::= { id-pkix-ocsp 6 }
@@ -568,7 +559,7 @@ FROM PKIXAlgs-2009 -- From [RFC5912]
 
 Sharma                  Expires 17 November 2024               [Page 10]
 
-Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
+Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-09         May 2024
 
 
 OCSPRequest     ::=     SEQUENCE {
@@ -624,7 +615,7 @@ OCSPResponseStatus ::= ENUMERATED {
 
 Sharma                  Expires 17 November 2024               [Page 11]
 
-Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
+Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-09         May 2024
 
 
    unauthorized          (6)  -- Request unauthorized
@@ -680,7 +671,7 @@ SingleResponse ::= SEQUENCE {
 
 Sharma                  Expires 17 November 2024               [Page 12]
 
-Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
+Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-09         May 2024
 
 
                                             } OPTIONAL }
@@ -736,7 +727,7 @@ re-ocsp-service-locator EXTENSION ::= { SYNTAX ServiceLocator
 
 Sharma                  Expires 17 November 2024               [Page 13]
 
-Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-08         May 2024
+Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-09         May 2024
 
 
                                        id-pkix-ocsp-service-locator }
