@@ -144,9 +144,10 @@ Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-09         May 2024
    length of 32 octets for Nonce in the Nonce extension.
 
    An OCSP responder , supporting the Nonce extension, MUST accept Nonce
-   lengths of at least 16 octets and MAY choose to respond without the
-   Nonce extension for requests where the length of the Nonce is in
-   between 1 octet and 15 octets or 33 octets and 128 octets.
+   lengths of at least 16 octets and up to and including 32 octets.
+   Responder MAY choose to respond without the Nonce extension for
+   requests where the length of the Nonce is in between 1 octet and 15
+   octets or 33 octets and 128 octets.
 
    Responders, that implements this document MUST reject any OCSP
    request that has a Nonce with a length of either 0 octets or more
@@ -161,7 +162,6 @@ Internet-Draft    draft-ietf-lamps-ocsp-nonce-update-09         May 2024
    id-pkix-ocsp           OBJECT IDENTIFIER ::= { id-ad-ocsp }
    id-pkix-ocsp-nonce     OBJECT IDENTIFIER ::= { id-pkix-ocsp 2 }
    Nonce ::= OCTET STRING(SIZE(1..128))
-
 
 
 
